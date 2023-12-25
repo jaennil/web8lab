@@ -121,8 +121,35 @@ function downloadData(page=1) {
     xhr.send();
 }
 
+const searchFactsByInput = (event) => {
+    const searchInput = document.querySelector('.search-field');
+    const factsList = document.querySelector('.facts-list');
+    factsList.dataset.url = `http://cat-facts-api.std-900.ist.mospolytech.ru/facts?q=${searchInput.value}`
+    downloadData()
+}
+
+const autocomplete = (event) => {
+    if (event.data === undefined) return;
+
+    const searchInput = document.querySelector('.search-field');
+    const autocompleteList = document.querySelector('#autocomplete')
+    const url = 'http://cat-facts-api.std-900.ist.mospolytech.ru/autocomplete'
+    fetch(`${url}?q=${searchInput.value}`)
+        .then(res => res.json())
+        .then(data => {
+            console.log(data)
+            let options = ''
+            data.forEach(item => {
+                options += `<option value="${item}">`
+            })
+            autocompleteList.innerHTML = options
+        })
+}
+
 window.onload = function () {
     downloadData();
     document.querySelector('.pagination').onclick = pageBtnHandler;
     document.querySelector('.per-page-btn').onchange = perPageBtnHandler;
+    document.querySelector('.search-btn').onclick = searchFactsByInput;
+    document.querySelector('.search-field').oninput = autocomplete;
 }
