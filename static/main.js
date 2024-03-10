@@ -128,22 +128,20 @@ const searchFactsByInput = (event) => {
     downloadData()
 }
 
-const autocomplete = (event) => {
-    if (event.data === undefined) return;
-
+const autocomplete = () => {
     const searchInput = document.querySelector('.search-field');
     const autocompleteList = document.querySelector('#autocomplete')
-    const url = 'http://cat-facts-api.std-900.ist.mospolytech.ru/autocomplete'
-    fetch(`${url}?q=${searchInput.value}`)
-        .then(res => res.json())
-        .then(data => {
-            console.log(data)
-            let options = ''
-            data.forEach(item => {
-                options += `<option value="${item}">`
-            })
-            autocompleteList.innerHTML = options
-        })
+	let url = new URL('http://cat-facts-api.std-900.ist.mospolytech.ru/autocomplete');
+	url.searchParams.append('q', searchInput.value)
+	let xhr = new XMLHttpRequest();
+	xhr.open('GET', url);
+	xhr.responseType = 'json';
+	xhr.onload = function() {
+		this.response.forEach(option => {
+			autocompleteList.innerHTML += `<option value="${option}">`;
+		})
+	}
+	xhr.send();
 }
 
 window.onload = function () {
